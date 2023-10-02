@@ -1,5 +1,6 @@
 import { shopApi } from '@/api';
 import { AuthLayout } from '@/components/layouts';
+import { AuthContext } from '@/context';
 import { validations } from '@/utils';
 import { ErrorOutline } from '@mui/icons-material';
 import {
@@ -12,7 +13,8 @@ import {
   Typography,
 } from '@mui/material';
 import NextLink from 'next/link';
-import { useState } from 'react';
+import { useRouter } from 'next/router';
+import { useContext, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 type FormData = {
@@ -22,30 +24,32 @@ type FormData = {
 };
 
 const RegisterPage = () => {
+  const router = useRouter();
+  const { registerUser } = useContext(AuthContext);
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<FormData>();
+
   const [showError, setShowError] = useState(false);
+  const [erroMessage, setErroMessage] = useState('');
 
   const onRegisterForm = async ({ email, password, name }: FormData) => {
     setShowError(false);
-    try {
-      const { data } = await shopApi.post('/user/register', {
-        email,
-        password,
-        name,
-      });
-      const { token, user } = data;
-      console.log({ token, user });
-    } catch (error) {
-      console.log(error);
+
+    const { hasError, message } = await registerUser(name, email, password);
+
+    if (hasError) {
       setShowError(true);
+      setErroMessage(message!);
       setTimeout(() => {
         setShowError(false);
       }, 3000);
+      return;
     }
+
+    router.replace('/');
   };
 
   return (
@@ -84,6 +88,7 @@ const RegisterPage = () => {
             </Grid>
             <Grid item xs={12}>
               <TextField
+                type='email'
                 label='Email'
                 variant='filled'
                 fullWidth
