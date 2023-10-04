@@ -1,4 +1,5 @@
 import { ShopLayout } from '@/components/layouts';
+import { jwt } from '@/utils';
 import {
   Box,
   Button,
@@ -10,35 +11,36 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
+import { GetServerSideProps } from 'next';
 
 const AddressPage = () => {
   return (
     <ShopLayout title={'Checkout'} pageDescription={'Confirm billing address'}>
-      <Typography variant="h1" component="h1">
+      <Typography variant='h1' component='h1'>
         Address
       </Typography>
       <Grid container spacing={2} sx={{ mt: 2 }}>
         <Grid item xs={12} sm={6}>
-          <TextField label="Name" variant="filled" fullWidth />
+          <TextField label='Name' variant='filled' fullWidth />
         </Grid>
         <Grid item xs={12} sm={6}>
-          <TextField label="Last Name" variant="filled" fullWidth />
+          <TextField label='Last Name' variant='filled' fullWidth />
         </Grid>
         <Grid item xs={12} sm={6}>
-          <TextField label="Address line 1" variant="filled" fullWidth />
+          <TextField label='Address line 1' variant='filled' fullWidth />
         </Grid>
         <Grid item xs={12} sm={6}>
-          <TextField label="Address line 2" variant="filled" fullWidth />
+          <TextField label='Address line 2' variant='filled' fullWidth />
         </Grid>
         <Grid item xs={12} sm={6}>
-          <TextField label="Zip Code" variant="filled" fullWidth />
+          <TextField label='Zip Code' variant='filled' fullWidth />
         </Grid>
         <Grid item xs={12} sm={6}>
-          <TextField label="City" variant="filled" fullWidth />
+          <TextField label='City' variant='filled' fullWidth />
         </Grid>
         <Grid item xs={12} sm={6}>
           <FormControl fullWidth>
-            <Select variant="filled" label="Country" value={1}>
+            <Select variant='filled' label='Country' value={1}>
               <MenuItem value={1}>Argentina</MenuItem>
               <MenuItem value={2}>Mexico</MenuItem>
               <MenuItem value={3}>Australia</MenuItem>
@@ -47,16 +49,41 @@ const AddressPage = () => {
           </FormControl>
         </Grid>
         <Grid item xs={12} sm={6}>
-          <TextField label="Phone" variant="filled" fullWidth />
+          <TextField label='Phone' variant='filled' fullWidth />
         </Grid>
       </Grid>
       <Box sx={{ mt: 5, display: 'flex', justifyContent: 'center' }}>
-        <Button color="secondary" className="circular-btn" size="large">
+        <Button color='secondary' className='circular-btn' size='large'>
           Place order
         </Button>
       </Box>
     </ShopLayout>
   );
+};
+
+export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+  const { token = '' } = req.cookies;
+  let isValidToken = false;
+
+  try {
+    await jwt.isValidToken(token);
+    isValidToken = true;
+  } catch (error) {
+    isValidToken = false;
+  }
+
+  if (!isValidToken) {
+    return {
+      redirect: {
+        destination: '/auth/login?p=/checkout/address',
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
 };
 
 export default AddressPage;

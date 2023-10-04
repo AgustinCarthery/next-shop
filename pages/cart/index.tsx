@@ -1,5 +1,6 @@
 import { CardList, OrderSummary } from '@/components/cart';
 import { ShopLayout } from '@/components/layouts';
+import { CartContext } from '@/context';
 import {
   Box,
   Button,
@@ -9,12 +10,26 @@ import {
   Grid,
   Typography,
 } from '@mui/material';
-import React from 'react';
+import { useRouter } from 'next/router';
+import React, { useContext, useEffect } from 'react';
 
 const CartPage = () => {
+  const { isLoaded, cart } = useContext(CartContext);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (isLoaded && cart.length === 0) {
+      router.replace('/cart/empty');
+    }
+  }, [cart, isLoaded, router]);
+
+  if (!isLoaded || cart.length === 0) {
+    return <></>;
+  }
+
   return (
-    <ShopLayout title="Cart - 3" pageDescription={'Shopping cart'}>
-      <Typography variant="h1" component="h1">
+    <ShopLayout title='Cart - 3' pageDescription={'Shopping cart'}>
+      <Typography variant='h1' component='h1'>
         Cart
       </Typography>
       <Grid container>
@@ -22,14 +37,19 @@ const CartPage = () => {
           <CardList editable />
         </Grid>
         <Grid item xs={12} sm={5}>
-          <Card className="summary-card">
+          <Card className='summary-card'>
             <CardContent>
-              <Typography variant="h2">Order</Typography>
+              <Typography variant='h2'>Order</Typography>
               <Divider sx={{ my: 1 }} />
 
               <OrderSummary />
               <Box sx={{ mt: 3 }}>
-                <Button color="secondary" className="circular-btn" fullWidth>
+                <Button
+                  color='secondary'
+                  className='circular-btn'
+                  fullWidth
+                  href='/checkout/address'
+                >
                   Checkout
                 </Button>
               </Box>
