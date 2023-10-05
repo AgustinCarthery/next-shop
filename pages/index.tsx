@@ -3,6 +3,7 @@ import { ProductList } from '@/components/products';
 import { FullScreenLoading } from '@/components/ui/FullScreenLoading';
 import { useProducts } from '@/hooks';
 import { Typography } from '@mui/material';
+import { useSession } from 'next-auth/react';
 
 export default function Home() {
   const { products, isLoading } = useProducts('/products');

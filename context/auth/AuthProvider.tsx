@@ -5,6 +5,7 @@ import { shopApi } from '@/api';
 import Cookies from 'js-cookie';
 import axios from 'axios';
 import { useRouter } from 'next/router';
+import { useSession, signOut } from 'next-auth/react';
 
 export interface AuthState {
   isLoggedIn: boolean;
@@ -22,11 +23,21 @@ interface AuthProviderProps {
 
 export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, AUTH_INITIAL_STATE);
+  const { data, status } = useSession();
+
   const router = useRouter();
 
   useEffect(() => {
-    checkToken();
-  }, []);
+    if (status === 'authenticated') {
+      console.log(data.user);
+
+      dispatch({ type: '[Auth] - Login', payload: data.user as IUser });
+    }
+  }, [data?.user, status]);
+
+  // useEffect(() => {
+  //   checkToken();
+  // }, []);
 
   const checkToken = async () => {
     if (!Cookies.get('token')) return;
@@ -88,7 +99,7 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
   };
 
   const logoutUser = () => {
-    Cookies.remove('token');
+    // Cookies.remove('token');
     Cookies.remove('cart');
     Cookies.remove('firstName');
     Cookies.remove('lastName');
@@ -99,7 +110,9 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
     Cookies.remove('country');
     Cookies.remove('phone');
 
-    router.reload();
+    signOut();
+
+    // router.reload();
   };
 
   return (
