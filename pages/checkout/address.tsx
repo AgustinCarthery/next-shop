@@ -4,16 +4,18 @@ import {
   Box,
   Button,
   FormControl,
+  FormHelperText,
   Grid,
+  InputLabel,
   MenuItem,
   Select,
   TextField,
   Typography,
 } from '@mui/material';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import Cookies from 'js-cookie';
 import { useRouter } from 'next/router';
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import { CartContext } from '@/context';
 
 type FormData = {
@@ -45,11 +47,12 @@ const AddressPage = () => {
   const { updateAddress } = useContext(CartContext);
 
   const {
+    control,
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<FormData>({
-    defaultValues: getAddressFromCookies(),
+    defaultValues: { ...getAddressFromCookies() },
   });
 
   const onSubmitAddress = async (data: FormData) => {
@@ -133,25 +136,24 @@ const AddressPage = () => {
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <FormControl fullWidth>
-              <TextField
-                select
-                variant='filled'
-                label='Country'
-                defaultValue={Cookies.get('country') || countries[0].code}
-                {...register('country', {
-                  required: 'Country is required',
-                })}
-                error={!!errors.country}
-                helperText={errors.country?.message}
-              >
-                {countries.map((country, key) => (
-                  <MenuItem key={country.code} value={country.code}>
-                    {country.name}
-                  </MenuItem>
-                ))}
-              </TextField>
-            </FormControl>
+            <Controller
+              name='country'
+              control={control}
+              defaultValue={''}
+              render={({ field }) => (
+                <FormControl fullWidth error={!!errors.country}>
+                  <InputLabel>Country</InputLabel>
+                  <Select {...field} label='Country'>
+                    {countries.map((country) => (
+                      <MenuItem key={country.code} value={country.code}>
+                        {country.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                  <FormHelperText>{errors.country?.message}</FormHelperText>
+                </FormControl>
+              )}
+            />
           </Grid>
           <Grid item xs={12} sm={6}>
             <TextField

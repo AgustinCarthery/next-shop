@@ -13,7 +13,7 @@ export const checkUserEmailPassword = async (
 
   if (!user) return null;
 
-  if (!bcrypt.compare(password, user.password!)) {
+  if (!(await bcrypt.compare(password, user.password!))) {
     return null;
   }
 
