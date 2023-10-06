@@ -5,27 +5,32 @@ import type { AppProps } from 'next/app';
 import { SWRConfig } from 'swr';
 import { AuthProvider, CartProvider, UiProvider } from '@/context';
 import { SessionProvider } from 'next-auth/react';
+import { PayPalScriptProvider } from '@paypal/react-paypal-js';
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
     <SessionProvider>
-      <SWRConfig
-        value={{
-          fetcher: (resource, init) =>
-            fetch(resource, init).then((res) => res.json()),
-        }}
+      <PayPalScriptProvider
+        options={{ clientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT || '' }}
       >
-        <AuthProvider>
-          <CartProvider>
-            <UiProvider>
-              <ThemeProvider theme={lightTheme}>
-                <CssBaseline />
-                <Component {...pageProps} />
-              </ThemeProvider>
-            </UiProvider>
-          </CartProvider>
-        </AuthProvider>
-      </SWRConfig>
+        <SWRConfig
+          value={{
+            fetcher: (resource, init) =>
+              fetch(resource, init).then((res) => res.json()),
+          }}
+        >
+          <AuthProvider>
+            <CartProvider>
+              <UiProvider>
+                <ThemeProvider theme={lightTheme}>
+                  <CssBaseline />
+                  <Component {...pageProps} />
+                </ThemeProvider>
+              </UiProvider>
+            </CartProvider>
+          </AuthProvider>
+        </SWRConfig>
+      </PayPalScriptProvider>
     </SessionProvider>
   );
 }
