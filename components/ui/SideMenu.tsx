@@ -78,14 +78,14 @@ export const SideMenu = () => {
                 <ListItemIcon>
                   <AccountCircleOutlined />
                 </ListItemIcon>
-                <ListItemText primary={'Perfil'} />
+                <ListItemText primary={'Profile'} />
               </ListItem>
 
-              <ListItem button>
+              <ListItem button onClick={() => navigateTo('/orders/history')}>
                 <ListItemIcon>
                   <ConfirmationNumberOutlined />
                 </ListItemIcon>
-                <ListItemText primary={'Mis Ordenes'} />
+                <ListItemText primary={'My orders'} />
               </ListItem>
             </>
           )}
@@ -98,7 +98,7 @@ export const SideMenu = () => {
             <ListItemIcon>
               <MaleOutlined />
             </ListItemIcon>
-            <ListItemText primary={'Hombres'} />
+            <ListItemText primary={'Men'} />
           </ListItem>
 
           <ListItem
@@ -109,7 +109,7 @@ export const SideMenu = () => {
             <ListItemIcon>
               <FemaleOutlined />
             </ListItemIcon>
-            <ListItemText primary={'Mujeres'} />
+            <ListItemText primary={'Women'} />
           </ListItem>
 
           <ListItem
@@ -120,7 +120,7 @@ export const SideMenu = () => {
             <ListItemIcon>
               <EscalatorWarningOutlined />
             </ListItemIcon>
-            <ListItemText primary={'Niños'} />
+            <ListItemText primary={'Kids'} />
           </ListItem>
 
           {isLoggedIn ? (
@@ -128,7 +128,7 @@ export const SideMenu = () => {
               <ListItemIcon>
                 <LoginOutlined />
               </ListItemIcon>
-              <ListItemText primary={'Salir'} />
+              <ListItemText primary={'Exit'} />
             </ListItem>
           ) : (
             <ListItem
@@ -138,7 +138,7 @@ export const SideMenu = () => {
               <ListItemIcon>
                 <VpnKeyOutlined />
               </ListItemIcon>
-              <ListItemText primary={'Ingresar'} />
+              <ListItemText primary={'Sign in'} />
             </ListItem>
           )}
 
@@ -153,20 +153,20 @@ export const SideMenu = () => {
                 <ListItemIcon>
                   <CategoryOutlined />
                 </ListItemIcon>
-                <ListItemText primary={'Productos'} />
+                <ListItemText primary={'Products'} />
               </ListItem>
               <ListItem button>
                 <ListItemIcon>
                   <ConfirmationNumberOutlined />
                 </ListItemIcon>
-                <ListItemText primary={'Ordenes'} />
+                <ListItemText primary={'Orders'} />
               </ListItem>
 
               <ListItem button>
                 <ListItemIcon>
                   <AdminPanelSettings />
                 </ListItemIcon>
-                <ListItemText primary={'Usuarios'} />
+                <ListItemText primary={'Users'} />
               </ListItem>
             </>
           )}

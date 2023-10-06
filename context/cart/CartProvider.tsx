@@ -2,6 +2,9 @@ import { FC, ReactNode, useEffect, useReducer, useRef } from 'react';
 import Cookie from 'js-cookie';
 import { ICartProduct } from '@/interfaces/cart';
 import { CartContext, cartReducer } from '.';
+import { IOrder, ShippingAddress } from '@/interfaces';
+import { shopApi } from '@/api';
+import axios from 'axios';
 
 export interface CartState {
   isLoaded: boolean;
@@ -11,17 +14,6 @@ export interface CartState {
   tax: number;
   total: number;
   shippingAddress?: ShippingAddress;
-}
-
-export interface ShippingAddress {
-  firstName: string;
-  lastName: string;
-  adddres: string;
-  adddres2?: string;
-  zip: string;
-  city: string;
-  country: string;
-  phone: string;
 }
 
 const CART_INITIAL_STATE: CartState = {
@@ -159,6 +151,49 @@ export const CartProvider: FC<CartProviderProps> = ({ children }) => {
     dispatch({ type: '[Cart] - Update Address', payload: address });
   };
 
+  const createOrder = async (): Promise<{
+    hasError: boolean;
+    message: string;
+  }> => {
+    if (!state.shippingAddress) {
+      throw new Error('Theres no shipping address');
+    }
+
+    const body: IOrder = {
+      orderItems: state.cart.map((p) => ({
+        ...p,
+        size: p.size!,
+      })),
+      numberOfItems: state.numberOfItems,
+      shippingAddress: state.shippingAddress,
+      subTotal: state.subTotal,
+      tax: state.tax,
+      total: state.total,
+      isPaid: false,
+    };
+
+    try {
+      const { data } = await shopApi.post<IOrder>('/orders', body);
+
+      dispatch({ type: '[Cart] - Order complete' });
+      return {
+        hasError: false,
+        message: data._id!,
+      };
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        return {
+          hasError: true,
+          message: error.response?.data.message,
+        };
+      }
+      return {
+        hasError: true,
+        message: 'Uncontrolled error',
+      };
+    }
+  };
+
   return (
     <CartContext.Provider
       value={{
@@ -167,6 +202,7 @@ export const CartProvider: FC<CartProviderProps> = ({ children }) => {
         updateCartQuantity,
         removeCartProduct,
         updateAddress,
+        createOrder,
       }}
     >
       {children}
