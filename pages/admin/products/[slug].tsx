@@ -135,9 +135,19 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
           '/admin/upload',
           formData
         );
-        console.log(data);
+        setValue('images', [...getValues('images'), data.message], {
+          shouldValidate: true,
+        });
       }
     } catch (error) {}
+  };
+
+  const onDeleteImage = (image: string) => {
+    setValue(
+      'images',
+      getValues('images').filter((img) => img !== image),
+      { shouldValidate: true }
+    );
   };
 
   const onSubmit = async (form: FormData) => {
@@ -386,20 +396,27 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
                 label='2 images at least'
                 color='error'
                 variant='outlined'
+                sx={{
+                  display: getValues('images').length < 2 ? 'flex' : 'none',
+                }}
               />
 
               <Grid container spacing={2}>
-                {product.images.map((img) => (
+                {getValues('images').map((img) => (
                   <Grid item xs={4} sm={3} key={img}>
                     <Card>
                       <CardMedia
                         component='img'
                         className='fadeIn'
-                        image={`/products/${img}`}
+                        image={img}
                         alt={img}
                       />
                       <CardActions>
-                        <Button fullWidth color='error'>
+                        <Button
+                          onClick={() => onDeleteImage(img)}
+                          fullWidth
+                          color='error'
+                        >
                           Delete
                         </Button>
                       </CardActions>

@@ -8,9 +8,9 @@ interface Props {
 }
 export const ProductSlideshow: FC<Props> = ({ images }) => {
   return (
-    <Slide easing="ease" duration={7000} indicators>
+    <Slide easing='ease' duration={7000} indicators>
       {images.map((img) => {
-        const url = `/products/${img}`;
+        const url = `${img}`;
         return (
           <div className={styles['each-slide']} key={img}>
             <div

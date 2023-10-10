@@ -31,5 +31,11 @@ const getProductBySlug = async (
     return res.status(404).json({ message: 'Non existing product' });
   }
 
+  product.images = product.images.map((img) => {
+    return img.includes('http')
+      ? img
+      : `${process.env.HOST_NAME}products/${img}`;
+  });
+
   return res.status(200).json(product);
 };
